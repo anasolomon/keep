@@ -1,70 +1,244 @@
-# Getting Started with Create React App
+Made a Header.ejx component which holds the header html element with it's css properties:
+```js
+import React from "react";
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+function Header() {
+    return (
+        <header>
+            <h1>Keeper</h1>
+        </header>
+    );
+}
 
-In the project directory, you can run:
+export default Header;
+```
+a Footer.ejx component with the footer element/css
+```js
+import React from "react";
 
-### `npm start`
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+function Footer() {
+    return (
+        <footer>
+            <p >
+                Copyright ⓒ {currentYear}
+            </p>
+        </footer>
+    );
+}
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+export default Footer;
+```
+and a Note.ejx with a p and h1 inside of a parent div with css class of note:
+```js
+import React from "react";
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function Note() {
+    return (
+        <div className="note">
+           <h1>This is the note title</h1>
+           <p>This is the note content</p>
+        </div>
+    );
+}
 
-### `npm run build`
+export default Note;
+```
+all of these exports were imported into the App.ejx file
+```js
+import React from "react";
+import Header from "./Header";
+import Footer from "./Footer";
+import Note from "./Note";
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+function App() {
+    return (
+      <div>
+        <Header />
+        <Note />
+        <Footer />
+      </div>
+    );
+  }
+  
+  export default App;
+```
+To display all of the components I will import the App.ejx into my index.js file
+```js
+import App from "./components/App";
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+ReactDOM.render(<App /> ,document.getElementById('root'));
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Step 2
+I have added 4 default notes in the "notes.js" file and exported it then diplayed all it's properties using the map() function into the Note component structure inside App.jsx
+```js
+import notes from "../notes";
 
-### `npm run eject`
+function App() {
+  return (
+    <div>
+      <Header />
+      {notes.map(note => (
+        <Note
+          key={note.key}
+          title={note.title}
+          content={note.content}
+        />
+      )
+      )}
+      <Footer />
+    </div>
+  );
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## V2
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Will change the App to dynamically add notes, which means we do not need the notes.js file anymore.   
+Added a CreateArea.jsx Component which takes two Inputs (title, content) if the "Add" button is clicked :
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```js
+function CreateArea() {
+  return (
+    <div>
+      <form>
+        <input name="title" placeholder="Title" />
+        <textarea name="content" placeholder="Take a note..." rows="3" />
+        <button>Add</button>
+      </form>
+    </div>
+  );
+}
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+To make this work firstly a useState that saves the Input onChange is needed:
 
-## Learn More
+```js
+const [note, setNote] = useState({
+    title: "",
+    content: ""
+  });
+  const [addedNote, setAddedNote] = useState([]);
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  function handleOnChange(event) {
+    const { value, name } = event.target;
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    setNote((prevNote) => {
+      return {
+        ...prevNote,
+        [name]: value
+      };
+    });
+  }
+```
 
-### Code Splitting
+A `onChange` event listener that points to the `handleOnChange` function is needed on both the Inputs and the Input's values must also be equal to one Truth
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+import React, { useState } from "react";
 
-### Analyzing the Bundle Size
+function CreateArea(props) {
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    return (
+        <div>
+            <form>
+                <input
+                    onChange={props.handleOnChange} name="title"
+                    value={props.note.title} placeholder="Title"
+                />
 
-### Making a Progressive Web App
+                <textarea
+                    onChange={props.handleOnChange} name="content"
+                    value={props.note.content} placeholder="Take a note..." rows="3"
+                />
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+                <button type="submit">Add</button>
+            </form>
+        </div>
+    );
+}
 
-### Advanced Configuration
+export default CreateArea;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+To fix the page refreshing each time the "Add" button gets pressed and to save the Input's data into another State I used a `onClick` event for the button which fixes both these issues :
 
-### Deployment
+```js
+<button type="submit" onClick={props.handleOnClick}>Add</button>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+In the handleOnClick function I'm passing the onChange State of the Inputs to be saved definitely into another State. Then resetting the Inputs to be empty again:
 
-### `npm run build` fails to minify
+```js
+function handleOnClick(event) {
+    event.preventDefault();
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    if (note.title.trim() !== "" || note.content.trim() !== "") {
+      setAddedNote([...addedNote, note]);
+      setNote({
+        title: "",
+        content: ""
+      });
+    }
+  }
+```
+
+These are the props that I passed in App.jsx for the CreateArea Component:
+
+```js
+<CreateArea
+        handleOnChange={handleOnChange}
+        handleOnClick={handleOnClick}
+        note={note} />
+```
+
+Finally, to display the saved Inputs from their useState I'm using the map function within App.jsx:
+
+```js
+{addedNote.map((note, index) => (
+        <Note
+          note={note}
+          index={index}
+          key={index}
+        />
+      ))}
+```
+
+In the Note Component jsx I'm giving each div (Note item) a unique index and associating note's title with the h1 and note's content with the p as props
+
+```js
+import React from "react";
+
+function Note(props) {
+    return (
+        <div key={props.index} className="note">
+
+            <h1>{props.note.title}</h1>
+            <p>{props.note.content}</p>
+            <button>DELETE</button>
+            
+        </div>
+    );
+}
+
+export default Note;
+```
+
+For the deletion method I used the `filter` function for the saved State items and set them with `setAddedNote` to be equal to all the previous notes except the ones with a matching id. And the matching id gets compared with the ones the user clicks the `DELETE` button on `<button onClick={props.handleDelete}>DELETE</button>`.   
+
+```js
+function handleDelete(index) {
+    setAddedNote((prevNotes) => {
+      return prevNotes.filter((item, id) => {
+        return id !== index;
+      })
+    })
+  }
+```
+
+Which means the Note component in the App.jsx now needs to identify the `handleDelete` aswell and we can tell it through `onChecked={handleDelete}`
