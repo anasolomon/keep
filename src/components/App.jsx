@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
+import notes from "../notes";
 import CreateArea from "./CreateArea";
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
     title: "",
     content: ""
   });
-  const [addedNote, setAddedNote] = useState([]);
+  const [addedNote, setAddedNote] = useState(notes);
 
   function handleOnChange(event) {
     const { value, name } = event.target;
@@ -21,7 +22,6 @@ function App() {
       };
     });
   }
-
   function handleOnClick(event) {
     event.preventDefault();
 

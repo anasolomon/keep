@@ -1,4 +1,4 @@
-Made a Header.ejx component which holds the header html element with it's css properties:
+Made a Header.jsx component which holds the header html element with it's css properties:
 ```js
 import React from "react";
 
@@ -13,7 +13,7 @@ function Header() {
 
 export default Header;
 ```
-a Footer.ejx component with the footer element/css
+a Footer.jsx component with the footer element/css
 ```js
 import React from "react";
 
@@ -32,7 +32,7 @@ function Footer() {
 
 export default Footer;
 ```
-and a Note.ejx with a p and h1 inside of a parent div with css class of note:
+and a Note.jsx with a p and h1 inside of a parent div with css class of note:
 ```js
 import React from "react";
 
@@ -48,7 +48,7 @@ function Note() {
 
 export default Note;
 ```
-all of these exports were imported into the App.ejx file
+all of these exports were imported into the App.jsx file
 ```js
 import React from "react";
 import Header from "./Header";
