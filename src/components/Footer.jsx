@@ -7,10 +7,10 @@ function Footer() {
   return (
     <footer>
       <p>
-        Copyright{" "}
+        Copyright {" "}
         <a href="https://github.com/anasolomon" target="_blank">
           Ana-Maria Tanasciuc
-        </a>
+        </a> {" "}
         © {currentYear}
       </p>
     </footer>
